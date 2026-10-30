@@ -1,0 +1,5 @@
+/benchouse
+/dist/
+*.tar.gz
+*.sqlite
+.env*

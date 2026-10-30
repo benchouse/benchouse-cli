@@ -1,0 +1,31 @@
+version: 2
+builds:
+  - main: ./cmd/benchouse
+    binary: benchouse
+    env: [CGO_ENABLED=0]
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    flags: [-trimpath]
+    ldflags: ["-s -w -X main.version={{.Version}}"]
+    mod_timestamp: "{{ .CommitTimestamp }}"
+archives:
+  - formats: [tar.gz]
+    format_overrides:
+      # Windows has no executable bit to preserve, so the .exe ships bare:
+      # download and run, no unzip. macOS and Linux keep tar.gz, which keeps
+      # the executable bit a browser download would strip.
+      - goos: windows
+        formats: [binary]
+    name_template: "benchouse_{{ .Os }}_{{ .Arch }}"
+checksum:
+  name_template: checksums.txt
+# checksums.txt is signed keylessly with the workflow's GitHub OIDC identity.
+# Verify with:
+#   cosign verify-blob checksums.txt --bundle checksums.txt.sigstore.json \
+#     --certificate-identity-regexp '^https://github.com/benchouse/benchouse-cli/' \
+#     --certificate-oidc-issuer https://token.actions.githubusercontent.com
+signs:
+  - cmd: cosign
+    artifacts: checksum
+    signature: "${artifact}.sigstore.json"
+    args: ["sign-blob", "--bundle=${signature}", "${artifact}", "--yes"]

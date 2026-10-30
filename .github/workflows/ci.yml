@@ -1,0 +1,57 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      # The smoke run below must not report usage stats; tests send none
+      # unless they point this at their own capture server.
+      BENCHOUSE_TELEMETRY_ENDPOINT: ""
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: go.mod
+      - name: gofmt
+        if: runner.os == 'Linux'
+        run: test -z "$(gofmt -l .)"
+      - name: vet
+        run: go vet ./...
+      - name: vet (windows build, from linux)
+        if: runner.os == 'Linux'
+        run: GOOS=windows go vet ./...
+      - name: test
+        run: go test -race -short ./...
+      - name: large-data tests (skipped by -short above)
+        if: runner.os == 'Linux'
+        run: go test -count=1 -timeout 20m -run 'MillionParts|MemoryIsBounded|SpillsChatIDs|BoundedMemory' -v ./internal/...
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+      - name: smoke (build, agents, collect, inspect)
+        run: |
+          set -euo pipefail
+          export BENCHOUSE_TELEMETRY_ENDPOINT=
+          go build -o "$RUNNER_TEMP/bin/" ./cmd/benchouse
+          bin="$RUNNER_TEMP/bin/benchouse"
+          if [ "$RUNNER_OS" = Windows ]; then bin="$bin.exe"; fi
+          "$bin" version
+          "$bin" agents --json > "$RUNNER_TEMP/agents.json"
+          grep -q '"id": "nao"' "$RUNNER_TEMP/agents.json"
+          # A synthetic nao database, written by a test helper.
+          BENCHOUSE_SMOKE_FIXTURE="$RUNNER_TEMP/smoke.sqlite" go test ./internal/agents/nao -run '^TestWriteSmokeFixture$' -count=1
+          cd "$RUNNER_TEMP"
+          "$bin" collect --agent nao --storage sqlite --sqlite-path smoke.sqlite --no-input --out out.tar.gz
+          "$bin" inspect out.tar.gz | tee inspect.txt
+          grep -q nao_message_part inspect.txt

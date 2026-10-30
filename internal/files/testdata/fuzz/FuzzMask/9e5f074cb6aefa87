@@ -1,0 +1,6 @@
+go test fuzz v1
+string("#")
+uint16(0)
+byte('*')
+byte('\x05')
+byte('p')

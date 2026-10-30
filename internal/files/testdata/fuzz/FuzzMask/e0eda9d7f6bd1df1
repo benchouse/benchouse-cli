@@ -1,0 +1,6 @@
+go test fuzz v1
+string("-1")
+uint16(204)
+byte('[')
+byte('l')
+byte('A')

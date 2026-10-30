@@ -1,0 +1,652 @@
+{
+ "observations": {
+  "trace-000": [
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-30T20:03:40.000Z",
+    "environment": "default",
+    "id": "trace-000-tool",
+    "input": {
+     "topic": "revenue"
+    },
+    "latency": 1,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "lookup_docs",
+    "output": {
+     "doc": "revenue = sum(amount)"
+    },
+    "parentObservationId": "trace-000-root",
+    "startTime": "2026-10-30T20:03:39.000Z",
+    "statusMessage": null,
+    "traceId": "trace-000",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   },
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-30T20:03:38.000Z",
+    "environment": "default",
+    "id": "trace-000-sql",
+    "input": {
+     "sql": "SELECT sum(amount) FROM orders WHERE week = 0"
+    },
+    "latency": 2,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "run_sql",
+    "output": {
+     "row_count": 1,
+     "rows": [
+      {
+       "amount": 4242.42,
+       "email": "canary-row@shop.test",
+       "token": "canary-result-value"
+      }
+     ]
+    },
+    "parentObservationId": "trace-000-root",
+    "startTime": "2026-10-30T20:03:36.000Z",
+    "statusMessage": null,
+    "traceId": "trace-000",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   },
+   {
+    "calculatedInputCost": 0.0001,
+    "calculatedOutputCost": 0.0001,
+    "calculatedTotalCost": 0.0002,
+    "endTime": "2026-10-30T20:03:35.000Z",
+    "environment": "default",
+    "id": "trace-000-gen",
+    "input": [
+     {
+      "content": "What was revenue in week 0?",
+      "role": "user"
+     }
+    ],
+    "latency": 2,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": "claude-haiku-4-5",
+    "modelParameters": null,
+    "name": "plan",
+    "output": {
+     "content": "I will query orders.",
+     "role": "assistant"
+    },
+    "parentObservationId": "trace-000-root",
+    "startTime": "2026-10-30T20:03:33.000Z",
+    "statusMessage": null,
+    "traceId": "trace-000",
+    "type": "GENERATION",
+    "usage": {
+     "input": 100,
+     "output": 20,
+     "total": 120,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {
+     "input": 100,
+     "output": 20,
+     "total": 120
+    }
+   },
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-30T20:03:52.000Z",
+    "environment": "default",
+    "id": "trace-000-root",
+    "input": {
+     "question": "What was revenue in week 0?"
+    },
+    "latency": 20,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "agent-run",
+    "output": {
+     "answer": "Revenue in week 0 was 1,000 EUR."
+    },
+    "parentObservationId": null,
+    "startTime": "2026-10-30T20:03:32.000Z",
+    "statusMessage": null,
+    "traceId": "trace-000",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   }
+  ],
+  "trace-001": [
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-28T20:02:40.000Z",
+    "environment": "default",
+    "id": "trace-001-tool",
+    "input": {
+     "topic": "revenue"
+    },
+    "latency": 1,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "lookup_docs",
+    "output": {
+     "doc": "revenue = sum(amount)"
+    },
+    "parentObservationId": null,
+    "startTime": "2026-10-28T20:02:39.000Z",
+    "statusMessage": null,
+    "traceId": "trace-001",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   },
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-28T20:02:38.000Z",
+    "environment": "default",
+    "id": "trace-001-sql",
+    "input": {
+     "sql": "SELECT sum(amount) FROM orders WHERE week = 1"
+    },
+    "latency": 2,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "run_sql",
+    "output": {
+     "row_count": 1,
+     "rows": [
+      {
+       "amount": 4242.42,
+       "email": "canary-row@shop.test",
+       "token": "canary-result-value"
+      }
+     ]
+    },
+    "parentObservationId": null,
+    "startTime": "2026-10-28T20:02:36.000Z",
+    "statusMessage": null,
+    "traceId": "trace-001",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   },
+   {
+    "calculatedInputCost": 0.000101,
+    "calculatedOutputCost": 0.000105,
+    "calculatedTotalCost": 0.000206,
+    "endTime": "2026-10-28T20:02:35.000Z",
+    "environment": "default",
+    "id": "trace-001-gen",
+    "input": [
+     {
+      "content": "What was revenue in week 1?",
+      "role": "user"
+     }
+    ],
+    "latency": 2,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": "claude-haiku-4-5",
+    "modelParameters": null,
+    "name": "plan",
+    "output": {
+     "content": "I will query orders.",
+     "role": "assistant"
+    },
+    "parentObservationId": null,
+    "startTime": "2026-10-28T20:02:33.000Z",
+    "statusMessage": null,
+    "traceId": "trace-001",
+    "type": "GENERATION",
+    "usage": {
+     "input": 101,
+     "output": 21,
+     "total": 122,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {
+     "input": 101,
+     "output": 21,
+     "total": 122
+    }
+   }
+  ],
+  "trace-004": [
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-22T19:59:38.000Z",
+    "environment": "default",
+    "id": "trace-004-sql",
+    "input": {
+     "sql": "SELECT sum(amount) FROM orders WHERE week = 4"
+    },
+    "latency": 2,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "run_sql",
+    "output": {
+     "row_count": 1,
+     "rows": [
+      {
+       "amount": 4242.42,
+       "email": "canary-row@shop.test",
+       "token": "canary-result-value"
+      }
+     ]
+    },
+    "parentObservationId": "trace-004-root",
+    "startTime": "2026-10-22T19:59:36.000Z",
+    "statusMessage": null,
+    "traceId": "trace-004",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   },
+   {
+    "calculatedInputCost": 0.000104,
+    "calculatedOutputCost": 0.00012,
+    "calculatedTotalCost": 0.000224,
+    "endTime": "2026-10-22T19:59:35.000Z",
+    "environment": "default",
+    "id": "trace-004-gen",
+    "input": [
+     {
+      "content": "What was revenue in week 4?",
+      "role": "user"
+     }
+    ],
+    "latency": 2,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": "claude-haiku-4-5",
+    "modelParameters": null,
+    "name": "plan",
+    "output": {
+     "content": "I will query orders.",
+     "role": "assistant"
+    },
+    "parentObservationId": "trace-004-root",
+    "startTime": "2026-10-22T19:59:33.000Z",
+    "statusMessage": null,
+    "traceId": "trace-004",
+    "type": "GENERATION",
+    "usage": {
+     "input": 104,
+     "output": 24,
+     "total": 128,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {
+     "input": 104,
+     "output": 24,
+     "total": 128
+    }
+   },
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-22T19:59:52.000Z",
+    "environment": "default",
+    "id": "trace-004-root",
+    "input": {
+     "question": "What was revenue in week 4?"
+    },
+    "latency": 20,
+    "level": "ERROR",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "agent-run",
+    "output": null,
+    "parentObservationId": null,
+    "startTime": "2026-10-22T19:59:32.000Z",
+    "statusMessage": "warehouse timeout",
+    "traceId": "trace-004",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   },
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-22T19:59:40.000Z",
+    "environment": "default",
+    "id": "trace-004-tool",
+    "input": {
+     "topic": "revenue"
+    },
+    "latency": 50,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "lookup_docs",
+    "output": {
+     "doc": "revenue = sum(amount)"
+    },
+    "parentObservationId": "trace-004-root",
+    "startTime": "2026-10-22T19:58:50.000Z",
+    "statusMessage": null,
+    "traceId": "trace-004",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   }
+  ],
+  "trace-010": [
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-10T19:53:40.000Z",
+    "environment": "default",
+    "id": "trace-010-tool",
+    "input": {
+     "topic": "revenue"
+    },
+    "latency": 1,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "lookup_docs",
+    "output": {
+     "doc": "revenue = sum(amount)"
+    },
+    "parentObservationId": "trace-010-root",
+    "startTime": "2026-10-10T19:53:39.000Z",
+    "statusMessage": null,
+    "traceId": "trace-010",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   },
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-10T19:53:52.000Z",
+    "environment": "default",
+    "id": "trace-010-root",
+    "input": {
+     "question": "What was revenue in week 10?"
+    },
+    "latency": 20,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "agent-run",
+    "output": {
+     "answer": "Revenue in week 10 was 1,010 EUR."
+    },
+    "parentObservationId": null,
+    "startTime": "2026-10-10T19:53:32.000Z",
+    "statusMessage": null,
+    "traceId": "trace-010",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   },
+   {
+    "calculatedInputCost": null,
+    "calculatedOutputCost": null,
+    "calculatedTotalCost": 0,
+    "endTime": "2026-10-10T19:53:38.000Z",
+    "environment": "default",
+    "id": "trace-010-sql",
+    "input": {
+     "sql": "SELECT sum(amount) FROM orders WHERE week = 10"
+    },
+    "latency": 51,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": null,
+    "modelParameters": null,
+    "name": "run_sql",
+    "output": {
+     "row_count": 1,
+     "rows": [
+      {
+       "amount": 4242.42,
+       "email": "canary-row@shop.test",
+       "token": "canary-result-value"
+      }
+     ]
+    },
+    "parentObservationId": "trace-010-root",
+    "startTime": "2026-10-10T19:52:47.000Z",
+    "statusMessage": null,
+    "traceId": "trace-010",
+    "type": "SPAN",
+    "usage": {
+     "input": 0,
+     "output": 0,
+     "total": 0,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {}
+   },
+   {
+    "calculatedInputCost": 0.00011,
+    "calculatedOutputCost": 0.00015,
+    "calculatedTotalCost": 0.00026,
+    "endTime": "2026-10-10T19:53:35.000Z",
+    "environment": "default",
+    "id": "trace-010-gen",
+    "input": [
+     {
+      "content": "What was revenue in week 10?",
+      "role": "user"
+     }
+    ],
+    "latency": 51,
+    "level": "DEFAULT",
+    "metadata": {},
+    "model": "claude-haiku-4-5",
+    "modelParameters": null,
+    "name": "plan",
+    "output": {
+     "content": "I will query orders.",
+     "role": "assistant"
+    },
+    "parentObservationId": "trace-010-root",
+    "startTime": "2026-10-10T19:52:44.000Z",
+    "statusMessage": null,
+    "traceId": "trace-010",
+    "type": "GENERATION",
+    "usage": {
+     "input": 110,
+     "output": 30,
+     "total": 140,
+     "unit": "TOKENS"
+    },
+    "usageDetails": {
+     "input": 110,
+     "output": 30,
+     "total": 140
+    }
+   }
+  ]
+ },
+ "traces": [
+  {
+   "createdAt": "2026-10-30T20:03:32.820Z",
+   "environment": "default",
+   "id": "trace-000",
+   "input": {
+    "question": "What was revenue in week 0?"
+   },
+   "latency": 20,
+   "metadata": {},
+   "name": "analytics-agent",
+   "output": {
+    "answer": "Revenue in week 0 was 1,000 EUR."
+   },
+   "projectId": "rr-proj",
+   "release": "r1",
+   "sessionId": "sess-0",
+   "tags": [
+    "eval"
+   ],
+   "timestamp": "2026-10-30T20:03:32.000Z",
+   "totalCost": 0.0002,
+   "updatedAt": "2026-10-30T20:03:38.607Z",
+   "userId": "ann@example.test"
+  },
+  {
+   "createdAt": "2026-10-30T20:03:32.824Z",
+   "environment": "default",
+   "id": "trace-001",
+   "input": {
+    "question": "What was revenue in week 1?"
+   },
+   "latency": 7,
+   "metadata": {},
+   "name": "analytics-agent",
+   "output": {
+    "answer": "Revenue in week 1 was 1,001 EUR."
+   },
+   "projectId": "rr-proj",
+   "release": "r1",
+   "sessionId": "sess-1",
+   "tags": [
+    "eval"
+   ],
+   "timestamp": "2026-10-28T20:02:32.000Z",
+   "totalCost": 0.000206,
+   "updatedAt": "2026-10-30T20:03:38.600Z",
+   "userId": "user-1"
+  },
+  {
+   "createdAt": "2026-10-30T20:03:08.390Z",
+   "environment": "default",
+   "id": "trace-004",
+   "input": {
+    "question": "What was revenue in week 4?"
+   },
+   "latency": 62,
+   "metadata": {},
+   "name": "analytics-agent",
+   "output": {
+    "answer": "Revenue in week 4 was 1,004 EUR."
+   },
+   "projectId": "rr-proj",
+   "release": "r1",
+   "sessionId": "sess-4",
+   "tags": [
+    "eval"
+   ],
+   "timestamp": "2026-10-22T19:58:43.000Z",
+   "totalCost": 0.000224,
+   "updatedAt": "2026-10-30T20:03:38.552Z",
+   "userId": "user-1"
+  },
+  {
+   "createdAt": "2026-10-30T20:03:08.352Z",
+   "environment": "default",
+   "id": "trace-010",
+   "input": {
+    "question": "What was revenue in week 10?"
+   },
+   "latency": 68,
+   "metadata": {},
+   "name": "analytics-agent",
+   "output": {
+    "answer": "Revenue in week 10 was 1,010 EUR."
+   },
+   "projectId": "rr-proj",
+   "release": "r1",
+   "sessionId": "sess-0",
+   "tags": [
+    "eval"
+   ],
+   "timestamp": "2026-10-10T19:52:43.000Z",
+   "totalCost": 0.00026,
+   "updatedAt": "2026-10-30T20:03:38.395Z",
+   "userId": "user-1"
+  }
+ ],
+ "v2_404": {
+  "error": "LangfuseNotFoundError",
+  "message": "The observations v2 API is only available in a Langfuse v4 write mode. Learn more at: https://langfuse.com/docs/v4"
+ }
+}
