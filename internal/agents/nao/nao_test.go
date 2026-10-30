@@ -183,3 +183,29 @@ func TestRebind(t *testing.T) {
 		t.Errorf("rebind = %q", got)
 	}
 }
+
+func TestChatsDeletedInNaoAreLeftOut(t *testing.T) {
+	p := fixture(t, 1)
+	db, err := sql.Open("sqlite", "file:"+p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, s := range []string{
+		`ALTER TABLE chat ADD COLUMN deleted_at INTEGER`,
+		`UPDATE chat SET deleted_at = 300 WHERE id = 'c0'`,
+	} {
+		if _, err := db.Exec(s); err != nil {
+			t.Fatal(err)
+		}
+	}
+	db.Close()
+	res := run(t, agent.Inputs{"storage": "sqlite", "sqlite-path": p}, agent.Options{})
+	if c := counts(res); c["nao_chat"] != 1 {
+		t.Errorf("deleted chat collected: counts = %v", c)
+	}
+	for _, r := range res.Records {
+		if r.NativeIDs["chat_id"] == "c0" {
+			t.Errorf("a record of the deleted chat was collected: %+v", r.NativeIDs)
+		}
+	}
+}

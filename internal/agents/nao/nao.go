@@ -118,10 +118,27 @@ const idsToken = "{ids}"
 
 // chatsStmt chooses the conversations: the most recent chats of the
 // project updated in the window, at most the cap (LIMIT -1 or NULL is none).
-const chatsStmt = `SELECT * FROM chat WHERE project_id = ? AND updated_at > ? ORDER BY updated_at DESC LIMIT ?`
+const chatsStmt = `SELECT * FROM chat WHERE project_id = ? AND updated_at > ? AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT ?`
+
+// Older nao versions have no chat.deleted_at; the same statements without
+// the filter are used there (see chatStatements).
+const (
+	chatsStmtNoDelete     = `SELECT * FROM chat WHERE project_id = ? AND updated_at > ? ORDER BY updated_at DESC LIMIT ?`
+	chatCountStmtNoDelete = `SELECT count(*) AS n FROM chat WHERE project_id = ? AND updated_at > ?`
+)
+
+// chatStatements returns the chat and count statements for this database:
+// chats a user deleted in nao (deleted_at set) are left out, because a
+// deletion is the user's decision, where the column exists.
+func chatStatements(ctx context.Context, d *db) (chats, count string) {
+	if _, err := d.rows(ctx, `SELECT deleted_at FROM chat LIMIT 0`); err != nil {
+		return chatsStmtNoDelete, chatCountStmtNoDelete
+	}
+	return chatsStmt, chatCountStmt
+}
 
 // chatCountStmt counts the chats the window holds, for the sample.
-const chatCountStmt = `SELECT count(*) AS n FROM chat WHERE project_id = ? AND updated_at > ?`
+const chatCountStmt = `SELECT count(*) AS n FROM chat WHERE project_id = ? AND updated_at > ? AND deleted_at IS NULL`
 
 const (
 	chatsPurpose = "conversations (the most recent chats in the window)"
@@ -266,10 +283,11 @@ func collect(ctx context.Context, in agent.Inputs, opts agent.Options, emit agen
 		return emit(rec)
 	}
 
+	chatsQ, countQ := chatStatements(ctx, d)
 	if opts.MaxConversations > 0 {
-		if n, err := countChats(ctx, d, projectID, since); err == nil {
+		if n, err := countChats(ctx, d, countQ, projectID, since); err == nil {
 			res.InWindow = &n
-			res.Queries = append(res.Queries, bundle.Query{Purpose: countPurpose, Statement: chatCountStmt, Rows: 1})
+			res.Queries = append(res.Queries, bundle.Query{Purpose: countPurpose, Statement: countQ, Rows: 1})
 		}
 	}
 
@@ -278,7 +296,7 @@ func collect(ctx context.Context, in agent.Inputs, opts agent.Options, emit agen
 	var ids agent.IDSpool
 	defer ids.Close()
 	chatArm := arm{kind: chatKind, table: "chat", cursor: "created_at", keys: chatKeys}
-	err = d.each(ctx, chatsStmt, []any{projectID, since, d.limit(opts.MaxConversations)}, func(row json.RawMessage) error {
+	err = d.each(ctx, chatsQ, []any{projectID, since, d.limit(opts.MaxConversations)}, func(row json.RawMessage) error {
 		var c struct {
 			ID any `json:"id"`
 		}
@@ -294,7 +312,7 @@ func collect(ctx context.Context, in agent.Inputs, opts agent.Options, emit agen
 	}
 	total := ids.Len()
 	res.Conversations = total
-	res.Queries = append(res.Queries, bundle.Query{Purpose: chatsPurpose, Statement: chatsStmt, Rows: total})
+	res.Queries = append(res.Queries, bundle.Query{Purpose: chatsPurpose, Statement: chatsQ, Rows: total})
 	if res.InWindow != nil && *res.InWindow > int64(total) {
 		res.Notes = append(res.Notes, fmt.Sprintf("%s chats in the window: the %s most recent were read",
 			agent.Thousands(*res.InWindow), agent.Thousands(int64(total))))
@@ -386,8 +404,8 @@ func (e *armError) Error() string { return e.err.Error() }
 func (e *armError) Unwrap() error { return e.err }
 
 // countChats counts the chats in the window.
-func countChats(ctx context.Context, d *db, projectID string, since any) (int64, error) {
-	rows, err := d.rows(ctx, chatCountStmt, projectID, since)
+func countChats(ctx context.Context, d *db, stmt, projectID string, since any) (int64, error) {
+	rows, err := d.rows(ctx, stmt, projectID, since)
 	if err != nil || len(rows) != 1 {
 		return 0, fmt.Errorf("count chats: %v", err)
 	}

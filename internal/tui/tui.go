@@ -45,6 +45,9 @@ type Config struct {
 	DBTDir, CtxDir, Email string
 	// Since is the --since text, shown on the review step.
 	Since string
+	// CapSet: --max-conversations was given; an agent's own default cap
+	// (agent.CapFor) does not replace it.
+	CapSet bool
 
 	// CheckDBT verifies a dbt project folder; nil means not checked.
 	CheckDBT func(dir string) (agent.CheckResult, error)

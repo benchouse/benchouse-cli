@@ -223,6 +223,11 @@ type Agent struct {
 	Name    string
 	Summary string
 	Status  Status
+	// DefaultMaxConversations replaces the global default cap for this
+	// agent when the user did not choose one: a reader limited by a slow API
+	// sets it so a default run still takes minutes, not hours. 0 keeps the
+	// global default.
+	DefaultMaxConversations int
 	// Fields are the connection inputs for reading conversations.
 	Fields []Field
 	// Context is the agent's context folder, or nil if it has none.
@@ -352,6 +357,15 @@ func readSecretFile(p string) (string, error) {
 		return "", fmt.Errorf("%s is empty", p)
 	}
 	return v, nil
+}
+
+// CapFor is the conversation cap to use for a: the user's choice when set,
+// else the agent's own default, else the global one.
+func CapFor(a Agent, chosen int, set bool) int {
+	if set || a.DefaultMaxConversations <= 0 {
+		return chosen
+	}
+	return a.DefaultMaxConversations
 }
 
 // All returns every agent alphabetically by name.

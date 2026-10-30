@@ -66,10 +66,13 @@ import (
 
 func init() {
 	agent.Register(agent.Agent{
-		ID:      "hex",
-		Name:    "Hex",
-		Summary: "Hex agent threads (Threads, Notebook and Modeling agents) via the Hex public API",
-		Status:  agent.Experimental,
+		ID:   "hex",
+		Name: "Hex",
+		// Hex allows 30 requests a minute and each thread costs at least
+		// one: 150 threads is about five minutes. The user can raise it.
+		DefaultMaxConversations: 150,
+		Summary:                 "Hex agent threads (Threads, Notebook and Modeling agents) via the Hex public API",
+		Status:                  agent.Experimental,
 		Setup: `The CLI reads Hex's agent threads over the public API with an API token
 (Settings > API keys) and only makes GET requests.
 

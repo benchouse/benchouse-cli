@@ -91,7 +91,8 @@ func check(ctx context.Context, in agent.Inputs, opts agent.Options) (agent.Chec
 		sinceMS = opts.Since.UnixMilli()
 	}
 	since := d.bound(sinceMS)
-	if _, err := d.rows(ctx, pgread.LimitZero(chatsStmt), projectID, since, d.limit(opts.MaxConversations)); err != nil {
+	chatsQ, countQ := chatStatements(ctx, d)
+	if _, err := d.rows(ctx, pgread.LimitZero(chatsQ), projectID, since, d.limit(opts.MaxConversations)); err != nil {
 		return res, fmt.Errorf("nao chat is not readable (needed for %s%s): %s", chatsPurpose, grantHint(d, in, "chat"), agent.Clip(err))
 	}
 	for _, a := range arms {
@@ -118,7 +119,7 @@ func check(ctx context.Context, in agent.Inputs, opts agent.Options) (agent.Chec
 		return res, fmt.Errorf("nao %s is not readable (needed for %s%s): %s", a.table, a.purpose, grantHint(d, in, a.table), agent.Clip(err))
 	}
 
-	if n, err := countChats(ctx, d, projectID, since); err == nil {
+	if n, err := countChats(ctx, d, countQ, projectID, since); err == nil {
 		res.Facts = append(res.Facts, agent.Conversations(n, "chat", "chats", opts))
 		res.Conversations = &n
 		if n == 0 {

@@ -24,6 +24,9 @@ import (
 
 // job is everything one collect or upload run needs.
 type job struct {
+	// capSet: --max-conversations was given, so an agent's own default
+	// cap does not replace it.
+	capSet   bool
 	agent    agent.Agent
 	inputs   agent.Inputs
 	opts     agent.Options
@@ -53,6 +56,7 @@ type common struct {
 	results, users, anonymize, yes, force, showQueries, noInput bool
 	plain                                                       bool // line-based prompts instead of the full-screen guided run
 	anonymizeSet                                                bool // --anonymize-users given explicitly
+	maxConvSet                                                  bool // --max-conversations given explicitly
 }
 
 func (c *common) register(fs *flag.FlagSet) {
@@ -118,7 +122,10 @@ func parse(name string, args []string) (*common, agent.Inputs, *agent.Agent, err
 	if fs.NArg() > 0 {
 		return nil, nil, nil, fmt.Errorf("unexpected argument %q", fs.Arg(0))
 	}
-	fs.Visit(func(f *flag.Flag) { c.anonymizeSet = c.anonymizeSet || f.Name == "anonymize-users" })
+	fs.Visit(func(f *flag.Flag) {
+		c.anonymizeSet = c.anonymizeSet || f.Name == "anonymize-users"
+		c.maxConvSet = c.maxConvSet || f.Name == "max-conversations"
+	})
 	if a != nil {
 		for _, f := range a.Fields { // environment fills what flags did not
 			if _, set := in[f.Key]; !set {
@@ -240,7 +247,7 @@ func newJob(ctx context.Context, name string, args []string, wantEmail bool) (*j
 			MaxConversations: c.maxConversations}}
 
 	if interactive && useTUI(c) {
-		j.tui, j.preset, j.since = true, a, c.since
+		j.tui, j.preset, j.since, j.capSet = true, a, c.since, c.maxConvSet
 		return j, nil, nil
 	}
 	if a == nil {
@@ -254,6 +261,7 @@ func newJob(ctx context.Context, name string, args []string, wantEmail bool) (*j
 		a = got
 	}
 	j.agent = *a
+	j.opts.MaxConversations = agent.CapFor(j.agent, c.maxConversations, c.maxConvSet)
 
 	if interactive {
 		if err := wizard(ctx, p, j, wantEmail); err != nil {

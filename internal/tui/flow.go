@@ -194,6 +194,7 @@ func (m *Model) actions() []string {
 
 func (m *Model) setAgent(a agent.Agent) {
 	m.agent = &a
+	m.maxConv = agent.CapFor(a, m.cfg.Opts.MaxConversations, m.cfg.CapSet)
 	m.given, m.vals, m.asked = map[string]bool{}, map[string]*string{}, map[string]bool{}
 	for _, f := range a.Fields {
 		v := m.cfg.Inputs[f.Key]
@@ -826,10 +827,14 @@ func (m *Model) capOptions() []huh.Option[int] {
 	listed := false
 	for _, n := range capChoices {
 		out = append(out, huh.NewOption(label(n), n))
-		listed = listed || n == m.cfg.Opts.MaxConversations
+		listed = listed || n == m.maxConv
 	}
 	if !listed {
-		out = append(out, huh.NewOption(label(m.cfg.Opts.MaxConversations)+" (--max-conversations)", m.cfg.Opts.MaxConversations))
+		note := " (--max-conversations)"
+		if !m.cfg.CapSet && m.agent != nil {
+			note = " (recommended for " + prompt.Clean(m.agent.Name) + ")"
+		}
+		out = append([]huh.Option[int]{huh.NewOption(label(m.maxConv)+note, m.maxConv)}, out...)
 	}
 	return out
 }

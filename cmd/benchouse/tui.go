@@ -35,7 +35,7 @@ func useTUI(c *common) bool {
 func runTUI(ctx context.Context, j *job, uploading bool) error {
 	cfg := tui.Config{
 		Upload: uploading, Agents: agent.All(), Agent: j.preset, Inputs: j.inputs, Opts: j.opts,
-		DBTDir: j.dbtDir, CtxDir: j.ctxDir, Email: j.email, Since: j.since,
+		DBTDir: j.dbtDir, CtxDir: j.ctxDir, Email: j.email, Since: j.since, CapSet: j.capSet,
 		CheckDBT: checkDBT,
 		Collect: func(ctx context.Context, s tui.Selection, progress func(string)) (tui.Bundle, error) {
 			b := *j
