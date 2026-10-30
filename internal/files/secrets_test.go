@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 )
 
 // Fake credentials, assembled so no scanner flags this source file.
@@ -309,6 +310,12 @@ func TestReadRefusesSwappedFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 	write(t, root, "a.md", "other\n")
+	// Make sure the replacement is distinguishable even if the filesystem
+	// reuses the inode and the clock is coarse.
+	later := seen.ModTime().Add(2 * time.Second)
+	if err := os.Chtimes(filepath.Join(root, "a.md"), later, later); err != nil {
+		t.Fatal(err)
+	}
 	if _, reason, err := readRegular(filepath.Join(root, "a.md"), seen); err != nil || reason != "changed while being read" {
 		t.Errorf("replaced file: %q %v", reason, err)
 	}

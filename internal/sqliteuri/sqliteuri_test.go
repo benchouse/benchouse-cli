@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -15,6 +16,9 @@ import (
 func TestDSNKeepsOddFileNamesAndReadOnly(t *testing.T) {
 	dir := t.TempDir()
 	for _, name := range []string{"plain.db", "a b.db", "q?mode=rw.db", "hash#x.db", "pct%41.db", "amp&immutable=0.db"} {
+		if runtime.GOOS == "windows" && strings.ContainsAny(name, `?*:<>|"`) {
+			continue // not a legal file name on Windows
+		}
 		// Build the fixture under a plain name, then rename it: the writer is
 		// the test, not the code under test.
 		tmp := filepath.Join(dir, "fixture.db")

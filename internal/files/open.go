@@ -32,7 +32,10 @@ func readRegular(p string, seen fs.FileInfo) ([]byte, string, error) {
 	if !fi.Mode().IsRegular() {
 		return nil, "not a regular file", nil
 	}
-	if !os.SameFile(fi, seen) {
+	// Same identity is not enough on its own: a filesystem may hand a deleted
+	// file's inode straight to its replacement. Size and modification time
+	// catch that.
+	if !os.SameFile(fi, seen) || fi.Size() != seen.Size() || !fi.ModTime().Equal(seen.ModTime()) {
 		return nil, "changed while being read", nil
 	}
 	raw, err := io.ReadAll(io.LimitReader(f, MaxFileBytes+1))
